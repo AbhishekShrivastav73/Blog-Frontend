@@ -19,11 +19,14 @@ function Blog({ post }) {
   // Fetch updated post data from the backend to ensure likes are correct
   const getUpdatedPost = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/post/${post._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:3000/api/post/${post._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const updatedPost = response.data;
       setLikes(updatedPost.likes.length);
       setIsLiked(updatedPost.likes.includes(localStorage.getItem("userId")));
@@ -64,47 +67,54 @@ function Blog({ post }) {
   }, []);
 
   return (
-    <div className="sm:w-[300px] h-fit w-full md:w-[380px] p-4 rounded-3xl bg-zinc-200">
-      <img src={post.author.profilePicture} alt={post.author.username} />
-      <h4 className="text-xl sm:text-2xl md:text-3xl font-bold">{post.title}</h4>
-      <div className="flex items-center gap-1 my-2 flex-wrap">
-        {post?.categories.map((category, idx) => (
-          <span
-            key={idx}
-            className="inline-block bg-zinc-400 text-xs px-4 py-1 rounded-full text-white"
+    <div className="sm:w-[300px] w-full md:w-[320px] lg:w-[380px] flex flex-col gap-1 justify-between p-4 rounded-3xl bg-zinc-200">
+      <div>
+        <img src={post.author.profilePicture} alt={post.author.username} />
+        <h4 className="text-xl sm:text-2xl md:text-3xl font-bold">
+          {post.title}
+        </h4>
+        <div className="flex items-center gap-1 my-2 flex-wrap">
+          {post?.categories.map((category, idx) => (
+            <span
+              key={idx}
+              className="inline-block bg-zinc-400 text-xs px-4 py-1 rounded-full text-white"
+            >
+              {category}
+            </span>
+          ))}
+        </div>
+      </div>    
+      <div>
+        <img
+          className="h-[30vh] w-full"
+          src={`http://localhost:3000/uploads/${post.image}`}
+          alt={post.title}
+        />
+        <span className="text-gray-500 text-xs">
+          Written by {post.author.username} on {post.createdAt}
+        </span>
+        <div className="flex items-center gap-2 text-sm mt-2">
+          <button
+            onClick={() => handleLike(post._id)}
+            className={`flex items-center gap-2 rounded-2xl px-4 py-2 ${
+              isLiked ? "bg-red-300" : "bg-zinc-300"
+            }`}
           >
-            {category}
-          </span>
-        ))}
-      </div>
-      <img
-        src={`http://localhost:3000/uploads/${post.image}`}
-        alt={post.title}
-      />
-      <span className="text-gray-500 text-xs">
-        Written by {post.author.username} on {post.createdAt}
-      </span>
-      <div className="flex items-center gap-2 text-sm mt-2">
-        <button
-          onClick={() => handleLike(post._id)}
-          className={`flex items-center gap-2 rounded-2xl px-4 py-2 ${
-            isLiked ? "bg-red-300" : "bg-zinc-300"
-          }`}
-        >
-          {isLiked ? <SlDislike /> : <SlLike />}
-          {isLiked ? "Unlike" : "Like"}
-        </button>
-        <button className="flex items-center gap-2 rounded-2xl bg-zinc-300 px-4 py-2">
-          <FaRegCommentAlt />
-          {post.comments.length}
-        </button>
-        <Link
-          to={`/post/${post._id}`}
-          className="flex items-center gap-2 bg-zinc-700 px-3 py-2 text-xs text-zinc-50 font-bold rounded-2xl"
-        >
-          Read Blog
-          <FaArrowUpRightFromSquare />
-        </Link>
+            {isLiked ? <SlDislike /> : <SlLike />}
+            {isLiked ? "Unlike" : "Like"}
+          </button>
+          <button className="flex items-center gap-2 rounded-2xl bg-zinc-300 px-4 py-2">
+            <FaRegCommentAlt />
+            {post.comments.length}
+          </button>
+          <Link
+            to={`/post/${post._id}`}
+            className="flex items-center gap-2 bg-zinc-700 px-3 py-2 text-xs text-zinc-50 font-bold rounded-2xl"
+          >
+            Read Blog
+            <FaArrowUpRightFromSquare />
+          </Link>
+        </div>
       </div>
     </div>
   );
